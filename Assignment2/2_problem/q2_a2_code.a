@@ -1,0 +1,88 @@
+.data
+
+  principal_message: .asciiz "Please Enter principal_message amount: "
+  rate_message: .asciiz "Please Enter the rate of interest in percentage: "
+  time_message: .asciiz "Please Enter the time: "
+
+  interest_message: .asciiz "The interest for the given data is: "
+
+  newLine: 
+    .asciiz "\n"
+
+  result:
+    .asciiz "The final total amount will be: "
+
+.text
+
+main:
+
+  # Printing text
+  la $a0, principal_message
+  li $v0, 4
+  syscall
+  
+  # Taking the pricipal as input
+  li $v0, 6
+  syscall
+  mov.s $f1, $f0
+  
+  # Printing text
+  li $v0, 4
+  la $a0, rate_message
+  syscall
+  
+  # Taking the rate of interest as input
+  li $v0, 6
+  syscall
+  mov.s $f2, $f0
+  
+  # Printing text
+  li $v0, 4
+  la $a0, time_message
+  syscall
+  
+  # Taking time as input
+  li $v0, 5
+  syscall
+  move $t0, $v0
+  
+  # Converting time to float
+  mtc1 $t0, $f0
+  cvt.s.w $f0, $f0
+  mov.s $f3, $f0
+  
+  # Calculating interest (raw value): p.r.t/100
+  mul.s $f0, $f1, $f2
+  mul.s $f4, $f0, $f3
+  li.s $f6, 100.0
+  div.s $f5, $f4, $f6
+  
+  # Printing interest (raw value): p.r.t/100
+  li $v0, 4
+  la $a0, interest_message
+  syscall
+
+  li $v0, 2
+  mov.s $f12, $f5
+  syscall
+
+  # Printing newline
+  li $v0, 4
+  la $a0, newLine
+  syscall
+  
+  # Calculating the final amount (absolute value): p + p.r.t/100
+  add.s $f7, $f1, $f5
+  
+  # Printing the final amount
+  li $v0, 4
+  la $a0, result
+  syscall
+
+  li $v0, 2
+  mov.s $f12, $f7
+  syscall
+
+  # Exit
+  li $v0, 10
+  syscall

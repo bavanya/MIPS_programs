@@ -1,0 +1,52 @@
+.data 
+
+insert_into:
+	.space 8 
+
+Give_direction:
+	.asciiz "Please Enter your first name: " 
+
+Print_output:
+	.asciiz "Hi " 
+
+Print_output_1:
+	.asciiz ", MIPS assembly programming is very exciting to learn" 
+
+newLine:
+	.asciiz "\n"
+
+.text 
+	
+main: 
+
+	la $a0, Give_direction
+	li $v0, 4 
+	syscall
+
+	la $a0, insert_into 
+	li $a1, 8
+	li $v0, 8 
+	syscall
+
+	move $t1, $a0
+
+	la $a0, newLine
+    li $v0, 4
+    syscall
+
+	la $a0, Print_output
+	li $v0, 4 
+	syscall 
+
+	#print input
+	move $a0, $t1
+	li $v0, 4
+	syscall
+
+	la $a0, Print_output_1 
+	li $v0, 4 
+	syscall 
+
+	li $v0, 10 
+	syscall
+
