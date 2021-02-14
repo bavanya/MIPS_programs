@@ -1,0 +1,55 @@
+# used to test QtSPIM
+ 
+	# Declare main as a global function
+	.globl main 
+ 
+	# All program code is placed after the
+	# .text assembler directive
+	.text 	
+ 
+# The label 'main' represents the starting point
+main:	
+ 
+	#eight-term (in A.P) / fourth term (in G.P.)
+ 
+	# eight term in AP: aAP + (nAP - 1)*d
+	lw $t0, nAP #loads into register $t0
+	li $t3, 1
+	subu $t0, $t0, $t3
+	lw $t1, d
+	lw $t2, aAP
+	mul $t9, $t0, $t1
+	add $t9, $t9, $t2
+
+	# fourth term (in G.P.): aGP*(r**3)
+	lw $t0, r
+	lw $t1, aGP
+	mul $t2, $t1, $t0
+	mul $t3, $t0, $t0
+	mul $t8, $t2, $t3	
+
+	# Diving the 8th term in AP with 4th term in gp and 
+	divu $t9, $t8
+	mflo $s0 # quotient to $t9
+	mfhi $s1 # remainder moved into $t8
+ 
+	# Exit the program by means of a syscall.
+		# There are many syscalls - pick the desired one
+		# by placing its code in $v0. The code for exit is "10"
+		li $v0, 10 # Sets $v0 to "10" to select exit syscall
+		syscall # Exit
+	 
+	# All memory structures are placed after the
+	# .data assembler directive
+	.data
+	 
+	# The .word assembler directive reserves space
+	# in memory for a single 4-byte word (or multiple 4-byte words)
+	# and assigns that memory location an initial value
+	# (or a comma separated list of initial values)
+	aAP: .word 1
+	aGP: .word 4
+	d: .word 10
+	r: .word 2
+	nAP: .word 8
+

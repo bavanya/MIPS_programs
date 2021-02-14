@@ -1,0 +1,38 @@
+# used to test QtSPIM
+ 
+	# Declare main as a global function
+	.globl main 
+ 
+	# All program code is placed after the
+	# .text assembler directive
+	.text 	
+ 
+# The label 'main' represents the starting point
+main:	
+	li $t5, 8 #loads into register $t5 
+	li $t4, 2  #loads into register $t4
+	li $t6, 4  #loads into register $t6
+	 
+	li $t1, 2   #loads into register $t1
+	li $t2, 1   #loads into register $t2
+	li $t3, 2   #loads into register $t3
+	 
+ 
+	mul $t4, $t4, $t1 		#$t4=$t4*$t1, result is only 32 bit
+	mul $t6, $t6, $t2		#$t6=$t6*$t2, result is only 32 bit
+	mul $t7, $t6, $t3 		#$t7=$t6*$t3, result is only 32 bit
+	 
+	add $t8, $zero, $t4
+	add $t9, $t6, $t7
+	add $t8, $t8, $t9
+ 
+	divu $t8, $t5
+	mflo $a0 # quotient to $a0
+ 
+	# Exit the program by means of a syscall.
+	# There are many syscalls - pick the desired one
+	# by placing its code in $v0. The code for exit is "10"
+	li $v0, 17 # Sets $v0 to "10" to select exit syscall
+	syscall # Exit
+ 
+

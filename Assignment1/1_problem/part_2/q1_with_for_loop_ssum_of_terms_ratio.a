@@ -1,0 +1,92 @@
+# used to test QtSPIM
+ 
+	# Declare main as a global function
+	.globl main 
+ 
+	# All program code is placed after the
+	# .text assembler directive
+	.text 	
+ 
+# The label 'main' represents the starting point
+main:	
+ 
+	#sum of the first six (in A.P) / first four numbers (in G.P.).
+ 
+	# sum of first 6 numbers: 3*(2*aAP + 5*d): (6*aAP + 15*d)
+
+	lw $t0, nAP
+	lw $t1, aAP
+	lw $t2, d
+	mul $t3, $t1, $t0
+
+	lw $t0, nAP
+	li $t1, 2
+	divu $t0, $t1
+	mflo $t1 # quotient to $t1
+	li $t2, 1
+	subu $t0, $t0, $t2
+
+	lw $t2, d
+	mul $t5, $t0, $t2
+	mul $t7, $t1, $t5
+
+	add $t7, $t7, $t3
+
+	# sum of first 4 numbers in GP: aGP*(pow(r,4) - 1)/ (r - 1)
+ 
+	#finding r - 1
+	lw $t0, r
+	li $t1, 1
+	subu $t8, $t0, $t1
+
+	#finding aGP*(pow(r,4) - 1)
+	# $s0 is i in for loop
+	# $s1 is initial value of the product taken as 1
+	# $t0 is the number of times loop should run ie, 4
+	addi $s1, $0, 1
+	add $s0, $0, $0
+	lw $t0, nGP
+	lw $t1, r
+ 
+	for: beq $s0, $t0, done
+		mul $s1, $s1, $t1
+		addi $s0, $s0, 1
+		j for
+	done:
+ 
+	li $t1, 1
+	subu $t5, $s1, $t1
+	lw $t2, aGP
+	mul $t9, $t2, $t5	
+
+	# Now we find (sum of first 6 terms in AP)*(r - 1)
+	mul $t7, $t7, $t8
+ 
+	# Now divide (sum of first 6 terms in AP)*(r - 1) with #aGP*(pow(r,4) - 1)
+	divu $t7, $t9
+	mflo $s0 # quotient to $s0
+	mfhi $s1 # remainder moved into $s1
+
+
+
+	# Exit the program by means of a syscall.
+		# There are many syscalls - pick the desired one
+		# by placing its code in $v0. The code for exit is "10"
+		li $v0, 10 # Sets $v0 to "10" to select exit syscall
+		syscall # Exit
+	 
+	# All memory structures are placed after the
+	# .data assembler directive
+	.data
+	 
+	# The .word assembler directive reserves space
+	# in memory for a single 4-byte word (or multiple 4-byte words)
+	# and assigns that memory location an initial value
+	# (or a comma separated list of initial values)
+	aAP: .word 1
+	aGP: .word 4
+	d: .word 10
+	r: .word 2
+	nAP: .word 6
+	nGP: .word 4
+

@@ -1,0 +1,36 @@
+# used to test QtSPIM
+ 
+	# Declare main as a global function
+	.globl main 
+ 
+	# All program code is placed after the
+	# .text assembler directive
+	.text 	
+ 
+# The label 'main' represents the starting point
+main:	
+
+
+	#HALF ADDER
+	li $t1, 0  #loads 0 into register $t1
+	li $t2, 1  #loads 1 into register $t2
+
+	#sum
+	# A Xor B
+	nor $t3,$t1,$t1
+	nor $t4,$t2,$t2
+	nor $t3,$t3,$t4
+	nor $t4,$t1,$t2
+	nor $s1,$t3,$t4
+	 
+	#carry
+	# A And B
+	and $s2, $t1, $t2
+
+	# Exit the program by means of a syscall.
+	# There are many syscalls - pick the desired one
+	# by placing its code in $v0. The code for exit is "10"
+	li $v0, 10 # Sets $v0 to "10" to select exit syscall
+	syscall # Exit
+ 
+
