@@ -1,0 +1,83 @@
+.data 
+
+newLine:
+	.asciiz "\n"
+
+    message1: .asciiz "Enter the marks of the student: "
+    message2: .asciiz "The grade of the student is: "
+    A: .asciiz "A"
+    B: .asciiz "B"
+    C: .asciiz "C"
+    F: .asciiz "F"
+
+.text 
+	
+main: 
+
+    li $v0, 4
+    la $a0, message1
+    syscall
+
+    li $v0, 5
+    syscall
+    move $t0, $v0
+
+	la $a0, newLine
+    li $v0, 4
+    syscall
+
+    li $v0, 4
+    la $a0, message2
+    syscall
+
+    # Code for marks >= 80
+    li $t1, 80
+    bge $t0, $t1, gradeA
+
+    # Code for 80 > marks >= 60
+    li $t1, 60
+    bge $t0, $t1, gradeB1
+
+    # Code for 60 > marks >= 40
+    li $t1, 40
+    bge $t0, $t1, gradeC1
+
+    # Code for otherwise
+    li $v0, 4
+    la $a0, F
+    syscall
+
+    li $v0, 10
+    syscall
+
+gradeA:
+    li $v0, 4
+    la $a0, A
+    syscall
+
+    li $v0, 10
+    syscall
+
+gradeB1:
+    li $t1, 80
+    blt $t0, $t1, gradeB2
+
+gradeB2:
+    li $v0, 4
+    la $a0, B
+    syscall
+
+    li $v0, 10
+    syscall
+
+gradeC1:
+    li $t1, 60
+    blt $t0, $t1, gradeC2
+
+gradeC2:
+    li $v0, 4
+    la $a0, C
+    syscall
+
+    li $v0, 10
+    syscall

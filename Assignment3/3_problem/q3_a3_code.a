@@ -1,0 +1,87 @@
+.data 
+
+insert_into:
+	.space 8 
+
+Give_direction:
+	.asciiz "Please Enter your first name: " 
+
+newLine:
+	.asciiz "\n"
+
+    message1: .asciiz "Enter the number of classes attend by the student: "
+    message2: .asciiz "Enter the total classes conducted: "
+    allowed: .asciiz " is allowed to sit in the exam."
+    notallowed: .asciiz " is not allowed to sit in the exam."
+
+.text 
+	
+main: 
+
+	la $a0, Give_direction
+	li $v0, 4 
+	syscall
+
+	la $a0, insert_into 
+	li $a1, 8
+	li $v0, 8 
+	syscall
+
+	move $t0, $a0
+
+	la $a0, newLine
+    li $v0, 4
+    syscall
+
+    li $v0, 4
+    la $a0, message1
+    syscall
+
+    li $v0, 5
+    syscall
+    move $t1, $v0
+
+	la $a0, newLine
+    li $v0, 4
+    syscall
+
+    li $v0, 4
+    la $a0, message2
+    syscall
+
+    li $v0, 5
+    syscall
+    move $t2, $v0
+
+    # For the attendence to be greater than or equal to 75, 100*(count of classes attended) > 75*(total classes)
+    # Finding 100*(count of classes attended)
+    li $t3, 100
+    mul $t3, $t3, $t1
+
+    # Finding 75*(total classes)
+    li $t4, 75
+    mul $t4, $t4, $t2
+
+    #print name of student
+	move $a0, $t0
+	li $v0, 4
+	syscall
+
+    bge $t3, $t4, IF #if $t3>=$t4: go to IF
+    # else part is here
+    li $v0, 4
+    la $a0, notallowed
+    syscall
+    
+    j DONE # go to DONE after executing else part.
+
+IF: 
+    li $v0, 4
+    la $a0, allowed
+    syscall
+
+DONE:
+    # Exit
+    li $v0, 10
+    syscall
+
