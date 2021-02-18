@@ -1,0 +1,1 @@
+Write a assembly program to swap two register values using logical instructions given in tables 2 and 4.

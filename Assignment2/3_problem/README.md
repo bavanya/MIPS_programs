@@ -1,0 +1,1 @@
+Write an assembly program that takes three character string from the user and print the second character from it.

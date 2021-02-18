@@ -1,0 +1,2 @@
+Write an assembly program that takes principle amount, rate of
+interest and time (taken as an input to integer register) as an input from the user and calculate simple interest and display the raw and absolute results to the user.

@@ -1,0 +1,1 @@
+Write an assembly program that takes two strings (of length of two characters) from the user and calculate the hamming distance. For example if “hi” and “he” are the input from the user then the hamming distance is 01.
