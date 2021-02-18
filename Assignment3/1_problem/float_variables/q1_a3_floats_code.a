@@ -26,10 +26,10 @@ main:
     mov.s $f2, $f0
 
     c.lt.s $f1, $f2
-    bc1t loop
+    bc1t print_sum
     mov.s $f2, $f1 
 
-loop:
+print_sum:
     li $v0, 4 
     la $a0, message3 
     syscall
