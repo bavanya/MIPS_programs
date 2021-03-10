@@ -12,3 +12,4 @@ The output format (for n = 6) should be like this:
 `1 number of fibonacci series is stored at memory location 3000`<br />
 `2 number of fibonacci series is stored at memory location 3004`<br />
 `3 number of fibonacci series is stored at memory location 3008`<br />
+`.........`
