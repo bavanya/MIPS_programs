@@ -1,0 +1,49 @@
+.data 
+
+    newLine:
+        .asciiz "\n"
+
+
+.text 
+
+main:     
+      
+    li $t0,1
+    li $t1,0
+
+top:
+    li $t2, 20
+    bgt $t1, $t2, end
+    addi $t0, $t0, 1
+    addi $t1, $t1, 2
+    j top
+
+end:
+
+    addi $t0, $t0, 1
+    li $t2, 100
+    blt  $t0, $t2, end
+
+topsecond:  ble $t1, $0, endfinal
+    li $t2, 1
+    subu $t0, $t0, $t2
+    subu $t1, $t1, $t2
+    j topsecond
+
+endfinal:
+
+    li $v0, 1 
+    move $a0, $t1
+    syscall
+
+    la $a0, newLine
+    li $v0, 4
+    syscall
+
+    li $v0, 1 
+    move $a0, $t0
+    syscall
+
+    # Exit
+    li $v0, 10
+    syscall
