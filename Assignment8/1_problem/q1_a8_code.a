@@ -1,0 +1,59 @@
+.data
+number: .asciiz  "Enter number to find factorial: "
+output_prompt_1: .asciiz "factorial of the entered number is: "
+output_prompt_2: .asciiz " is "
+
+.text
+main:
+
+    la $a0, number
+    li $v0, 4
+    syscall
+
+    li $v0, 5
+    syscall
+
+    add $a1, $v0, 0 
+
+    la $a0, output_prompt_1
+    li $v0, 4
+    syscall
+
+    addi $a0, $a1, 0 
+    li $v0, 1
+    syscall
+
+    la $a0, output_prompt_2
+    li $v0, 4
+    syscall
+
+    addi $a0, $a1, 0
+
+    jal factorial_function
+
+    addi $a0, $v1, 0
+    li $v0, 1
+    syscall
+
+    #exit
+    li $v0, 10
+    syscall
+
+    factorial_function:
+        li $t0, 1
+        subu $sp, $sp, 4
+        sw $ra, ($sp)
+        bne $a0, $t0, factorial_function_support
+        lw $ra, ($sp) 
+        add $sp, $sp, 4
+        jr $ra
+
+    factorial_function_support:
+        subu $a0, $a0, 1
+        mul $a1, $a1, $a0
+        add $v1, $a1, 0
+        jal factorial_function
+        lw $ra, ($sp) 
+        add $sp, $sp, 4
+        jr $ra
+
