@@ -1,0 +1,140 @@
+.data
+	array: 	.word 92:11
+	comma:	.asciiz ", "
+	iteration_string:	.asciiz "\nIteration "
+	colon:	.asciiz ": "
+	start:	.asciiz "Before Bubble Sort: \n"
+	end: .asciiz "\n\nAfter Bubble Sort: "
+	
+.globl main
+.text
+
+main:
+	li	$v0,4
+	la	$a0, start
+	syscall
+	
+	li $t0, 0
+	la $s2, array	
+	jal array_element_input
+
+	li $t0, 1	
+	li $t5, 0	
+	la $s2, array
+	jal bubbleSort
+
+
+	li $v0, 10
+	syscall
+
+array_element_input:
+	beq $t0, 10, return
+	
+	mul $s1, $t0, 4
+	add $s4, $s1, $s2
+	
+	li $v0, 5
+	syscall
+	move $s3, $v0
+
+	sw $s3, 0($s4)
+	add $t0, $t0, 1
+	j array_element_input
+	jr $ra
+
+
+bubbleSort:
+	beq $t9, 10, exit
+	beq $t5, 100, exit
+	beq $t0, 0, printEnd
+	
+	li $t0, 0
+	li $t1, 0		
+	add $t5, $t5, 1
+	
+	mul $s0, $t1, 4
+	add $s4, $s2, $s0
+	lw $s3, 0($s4)		
+	j loop
+	jr $ra
+	
+loop:
+	beq $s0, 44, print
+	add $s0, $s0, 4
+	add $s4, $s2, $s0
+	lw $s5, 0($s4)
+
+	sle $s6, $s3, $s5
+	jal swap
+	move $s3, $s5
+	j loop
+
+	jr $ra
+
+swap:
+	beq $s6, 1, return
+	li $t0, 1
+	sw $s3, 0($s4)
+	sub $s7, $s4, 4
+	sw $s5, 0($s7)
+	move $s8, $s3
+	move $s3, $s5
+	move $s5, $s8
+	
+	jr $ra
+
+print:
+	li	$v0,4
+	la	$a0, iteration_string
+	syscall
+
+	li $v0, 1
+	move $a0, $t5
+	syscall
+
+	li	$v0,4
+	la	$a0, colon
+	syscall
+	
+	li $s0, 0
+	add $s4, $s2, $s0
+	jal print_elements
+	jr $ra
+	
+
+print_elements:
+	beq $s0, 40, bubbleSort
+	lw $s3, 0($s4)
+	
+	li $v0, 1
+	move $a0, $s3
+	syscall
+
+	li	$v0,4
+	la	$a0, comma
+	syscall
+
+	add $s0, $s0, 4
+	add $s4, $s2, $s0
+	j print_elements
+	j exit
+
+return:
+	jr $ra
+
+	li $v0,10
+	syscall
+
+exit:
+	li $v0, 10
+	syscall
+
+printEnd:
+	li	$v0,4
+	la	$a0, end
+	syscall
+
+	li $s0, 0
+	add $s4, $s2, $s0
+	li $t9, 10
+	j print_elements

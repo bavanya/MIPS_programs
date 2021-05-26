@@ -1,0 +1,139 @@
+.data
+	array:		.word 85, 70, 95, 90
+	name:		.word 'a', 'b','h','i','l','a','s','h'
+	nameSize:	.word 8
+	no_match: 	.asciiz "\nStudent name is not matched"
+	input:		.asciiz "Enter Student Name: "
+	output:		.asciiz "\nThe marks of student is as follows: \nPhysics"
+	buffer: 	.space 30
+	username:	.word 'y':8
+	chemistry:		.asciiz "\nChemistry: "
+	mathematics:	.asciiz "\nMathematics: "
+	biology:		.asciiz "\nBiology: "
+
+.text
+.globl main
+
+main:
+	
+	li	$v0,4
+	la	$a0, input
+	syscall
+	
+	li $t0, 0
+	la $s2, username 		
+	jal takeInput
+	li $t1,0
+	
+	li $s1, 0		
+	la $s2, name	
+	la $s5, username	
+	lw $t2, nameSize
+	mul $t3, $t2, 4
+	j matchString
+
+	li $v0, 10
+	syscall
+
+	matchString:
+		beq $s1, 32, print
+		
+		add $s4, $s1, $s2	
+		lw $s3, 0($s4) 		
+		add $s4, $s1, $s5	
+		lw $s6, 0($s4) 	
+		
+		bne $s3, $s6, false
+
+		add $s1, $s1, 4 
+		j matchString
+
+	false:
+		
+		li	$v0,4
+		la	$a0, no_match
+		syscall
+
+		li $v0, 10
+		syscall
+
+	print:
+		li	$v0,4
+		la	$a0, output
+		syscall	
+
+		li $s1, 0
+		la $s2, array	
+		j print_array
+		
+		li $v0, 10
+		syscall
+
+
+	print_array:
+		add $s4, $s1, $s2	
+		lw  $s3, 0($s4) 	
+
+		li $v0, 1
+		move $a0, $s3
+		syscall
+
+		#chemistry
+		li	$v0,4
+		la	$a0, chemistry
+		syscall	
+
+		add $s2, $s2, 4
+		add $s4, $s1, $s2	
+		lw  $s3, 0($s4) 	
+
+		li $v0, 1
+		move $a0, $s3
+		syscall
+
+		#mathematics
+		li	$v0,4
+		la	$a0, mathematics
+		syscall	
+
+		add $s2, $s2, 4
+		add $s4, $s1, $s2	
+		lw  $s3, 0($s4) 	
+
+		li $v0, 1
+		move $a0, $s3
+		syscall
+
+		#biology
+		li	$v0,4
+		la	$a0, biology
+		syscall	
+
+		add $s2, $s2, 4
+		add $s4, $s1, $s2	
+		lw  $s3, 0($s4) 	
+
+		li $v0, 1
+		move $a0, $s3
+		syscall
+		
+		li $v0, 10
+		syscall
+
+	takeInput: beq $t0, 8, return
+		move $s1, $t0 		
+		mul $s1, $s1, 4		
+
+		add $s4, $s1, $s2	
+
+		li $v0, 12
+		syscall
+		move $s3, $v0
+		
+		sw $s3, 0($s4) 		
+		add $t0, $t0, 1
+		
+		j takeInput
+
+	return:
+		jr $ra
