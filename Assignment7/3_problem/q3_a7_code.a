@@ -1,0 +1,164 @@
+.data 
+N: .word 4 
+M: .word 4
+
+comma: .asciiz ", "
+
+prompt1: .asciiz "Vector X addition product : "
+prompt2: .asciiz "\nOverflow in the vector addition"
+prompt3:  .asciiz "\nOverflow incur in the vector addition."
+prompt4: .asciiz "\nSize of array X is : "
+prompt5: .asciiz "\nSize of array Y is : "
+
+X: .word 0:100 
+Y: .word 1, 3, 2, 5
+Z: .word 2, 4, 6, 4
+
+.globl main
+.text 
+
+main:
+
+    lw $t1 ,N
+    sw $t1 ,-4($sp)
+
+    lw $t1 ,M
+    sw $t1 ,-8($sp)
+
+    la $t1 ,X
+    sw $t1 ,-12($sp)
+
+    la $t1 ,Y
+    sw $t1 ,-16($sp)
+
+    la $t1 ,Z
+    sw $t1 ,-20($sp)
+
+    addi $sp,$sp,-20
+    jal Y_plus_Z
+
+    addi $sp,$sp,20
+
+    beq $v0, $zero, print_value_of_X
+
+    la $a0, prompt3
+    li $v0, 4 
+    syscall
+
+
+    la $a0, prompt4
+    li $v0, 4 
+    syscall
+
+    lw $a0,N
+    li $v0,1
+    syscall
+
+    la $a0, prompt5
+    li $v0, 4 
+    syscall
+
+    lw $a0,M
+    li $v0,1
+    syscall
+
+    j exit
+
+    print_value_of_X:
+
+        la $a0, prompt1
+        li $v0, 4 
+        syscall 
+
+        lw $t0,N
+        li $t2,0
+        la $t1 ,X
+
+    print_loop: beq $t2,$t0, exit_print_loop
+        lw $t3,0($t1)
+
+        li $v0,1
+        move $a0,$t3
+        syscall
+
+        la $a0, comma
+        li $v0, 4 
+        syscall 
+
+        addi $t1 ,$t1 ,4
+        addi $t2,$t2,1
+
+        j  print_loop
+
+    exit_print_loop:
+        la $a0, prompt2
+        li $v0, 4 
+        syscall
+
+        j exit
+
+    exit:
+        li $v0,10
+        syscall
+
+    Y_plus_Z:
+        lw $s0, 0($sp) 
+        lw $s1, 4($sp) 
+        lw $s2, 8($sp) 
+        lw $s3, 12($sp)
+        lw $s4, 16($sp)
+
+        bne $s3,$s4,overflow 
+
+    sub $sp, $sp, 4 
+    li $t1 ,0
+    sw $ra, ($sp) 
+
+    loop_for_addition: beq $t1 ,$s4, exit_loop_for_addition
+        lw $t0, 0($s1)
+        lw $t2, 0($s0) 
+
+        move $a0,$t0
+        jal getting_absolute_value
+
+        move $a0,$t2
+        move $t0,$v0
+
+
+        jal getting_absolute_value
+
+        move $t2,$v0
+        
+        add $t3,$t0,$t2
+        sw $t3,0($s2)
+
+        subu $t1 ,$t1 , -1
+        addi $s0,$s0,4
+        addi $s1,$s1,4
+        addi $s2,$s2,4
+
+        j loop_for_addition
+
+    getting_absolute_value:
+
+        move $t4,$a0
+        bge $t4,$zero,skip
+        mul $t4,$t4,-1
+
+    exit_loop_for_addition:
+
+        lw $ra,0($sp)
+        addi $sp,$sp,4
+        li $v0,0 
+        jr $ra
+
+    skip:
+
+        move $v0,$t4
+        jr $ra
+
+    overflow:
+
+        li $v0,1 
+        jr $ra
+

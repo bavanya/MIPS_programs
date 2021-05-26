@@ -1,0 +1,85 @@
+.data
+    comma: .asciiz ", "
+    newLine: .asciiz "\n"
+    input_0: .asciiz "Enter 10 numbers one in each line"
+    output: .asciiz "Reverse of inputted numbers is: "
+    array: .word 0:10
+
+.text
+
+main:
+    li $t4 4
+    li $t0 0
+
+    li $v0 4
+    la $a0 input_0
+    syscall
+
+    li $v0 4
+    la $a0 newLine
+    syscall   
+
+    li $t8 10
+    la $t2 array     
+    
+    Loop_1:
+    
+    	beq $t0 $t8 Sub_section_1
+                
+        li $v0 5
+        syscall
+        move $t3 $v0 
+
+        mul $t9 $t0 $t4 
+        add $t9 $t9 $t2 
+        sw $t3 ($t9) 
+
+        addi $sp $sp -4
+        sw $t3 4($sp) 
+
+        addi $t0 $t0 1
+
+        j Loop_1
+
+    Sub_section_1:
+
+        li $v0 4
+        la $a0 output
+        syscall
+
+        li $t0 0
+
+        loop_in_sub_section:
+            beq $t0 9 Sub_section_2
+
+            addi $sp $sp 4
+            lw $t3 ($sp)
+            
+
+            move $a0 $t3 
+            li $v0 1
+            syscall
+
+            li $v0 4
+            la $a0 comma
+            syscall
+
+            addi $t0 $t0 1
+
+            j loop_in_sub_section
+
+    Sub_section_2:
+
+        addi $sp $sp 4
+        lw $t3 ($sp)
+        
+        move $a0 $t3 
+        li $v0 1
+        syscall
+
+        li $v0 10
+        syscall
+
+
+
+
