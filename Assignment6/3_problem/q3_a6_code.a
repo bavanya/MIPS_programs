@@ -1,0 +1,103 @@
+.text
+.globl main
+	main:
+
+		li $v0 4
+		la $a0 n
+		syscall
+
+		li $v0 5
+		syscall
+
+		move $t0 $v0
+
+		li $v0 4
+		la $a0 r
+		syscall
+
+		li $v0 5
+		syscall
+
+		move $t1 $v0
+		
+		la $a0 factorial
+		li $v0 4
+		syscall
+
+		move $a1 $t0
+		jal factorial_function
+
+		move $a0 $v1
+		li $v0 1
+		syscall
+		
+		la $a0 newline
+		li $v0 4
+		syscall
+
+		la $a0 permutation
+		li $v0 4
+		syscall
+
+		sub $a1 $t0 $t1
+		move $a3 $v1
+		jal factorial_function
+
+		move $a2 $v1
+		jal divide
+
+		move $a0 $v1
+		li $v0 1
+		syscall	
+
+		la $a0 newline
+		li $v0 4
+		syscall
+
+		la $a0 combination
+		li $v0 4
+		syscall
+
+		move $a1 $t1
+		move $a3 $v1
+		jal factorial_function
+
+		move $a2 $v1
+		jal divide
+
+		move $a0 $v1
+		li $v0 1
+		syscall
+
+		j exit
+
+	factorial_function:
+		li $v1 1
+		ble $a1 $v1 return
+		li $t2 2
+		j for_loop
+		
+	for_loop:
+		mul $v1 $v1 $t2
+		addi $t2 $t2 1
+		ble $t2 $a1 for_loop
+		jr $ra
+		
+	divide:
+		div $v1 $a3 $a2
+		jr $ra
+
+	return:
+		jr $ra
+
+	exit:
+		li $v0 10
+		syscall
+
+.data
+	n: .asciiz "Enter the value of n: "
+	r: .asciiz "Enter the value of r: "
+	newline: .asciiz "\n"
+	permutation: .asciiz "The number of different permutations of n distinct objects taken r at a time: "
+	combination: .asciiz "The number of different combinations of n distinct objects taken r at a time: "
+	factorial: .asciiz "The factorial of n is: "

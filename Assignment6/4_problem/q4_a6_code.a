@@ -1,0 +1,487 @@
+.data
+
+first_stack: .space 100
+second_stack: .space 100
+
+stack_for_pivot: .space 100
+stack_for_return: .space 100
+
+first_array: .space 100
+second_array: .space 100
+
+quick_sort_comparisons: .word 0
+quick_sort_swaps: .word 0
+
+bubble_sort_comparisons: .word 0
+bubble_sort_swaps: .word 0
+
+selection_sort_comparisons: .word 0
+selection_sort_swaps: .word 0
+
+pre_bubble_sort: .asciiz "Before Bubble Sort: "
+pre_quick_sort: .asciiz "Before Quick Sort: "
+pre_selection_sort: .asciiz "Before Selection Sort: "
+
+post_bubble_sort: .asciiz "After Bubble Sort: "
+post_quick_sort: .asciiz "After Quick Sort: "
+post_selection_sort: .asciiz "After Selection Sort: "
+
+inputarray: .asciiz "input the array of size 10:\n"
+
+comp: .asciiz "Total Number of Comparisons: "
+swaps: .asciiz "Total Number of Swaps: "
+
+output_of_comparisions: .asciiz " is best in terms of comparison\n"
+output_of_swaps: .asciiz " is best in terms of swap\n"
+
+bubble_sort: .asciiz "Bubble sort"
+selection_sort: .asciiz "Selection sort"
+quick_sort: .asciiz "Quick sort"
+
+comma: .asciiz ", "
+newline: .asciiz "\n"
+
+.text
+main:
+
+  li $v0, 4
+  la $a0, inputarray
+  syscall
+  
+  li $s0, 9
+  li $t0, 0
+  la $s1, first_array
+
+  taking_array_input:
+    addi $t0, $t0, 1
+
+    li $v0, 5
+    syscall
+
+    sw $v0, 0($s1)
+
+    addi $s1, $s1, 4
+
+    ble $t0, $s0, taking_array_input
+
+  la $s1, first_array
+  la $s2, second_array
+
+  li $s0, 10
+  
+  jal array_replicate
+  
+  li $s3, 0
+  li $s4, 0 
+
+  la $a0, pre_bubble_sort
+  li $v0, 4
+  syscall
+
+  jal printarray
+   
+  li $a0, 0
+  li $a1, 9
+  jal bubble_sortsort
+  
+  sw $s3, bubble_sort_comparisons
+  sw $s4, bubble_sort_swaps
+  
+  li $v0, 4
+  la $a0, post_bubble_sort
+  syscall
+
+  jal printarray
+  
+  li $v0, 4
+  la $a0, comp
+  syscall
+
+  li $v0, 1
+  lw $a0, bubble_sort_comparisons
+  syscall
+
+  li $v0, 4
+  la $a0, newline
+  syscall
+  
+  li $v0, 4
+  la $a0, swaps
+  syscall
+
+  li $v0, 1
+  lw $a0, bubble_sort_swaps
+  syscall
+
+  li $v0, 4
+  la $a0, newline
+  syscall
+  
+  jal array_replicate
+  
+  li $s3, 0 
+  li $s4, 0 
+  
+  la $s5, first_stack
+  la $s6, second_stack
+  la $s7, stack_for_pivot
+  la $s8, stack_for_return
+  
+  li $v0, 4
+  la $a0, pre_quick_sort
+  syscall
+
+  jal printarray
+   
+  li $a0, 0
+  li $a1, 9
+  jal quick_sortsort
+  
+  sw $s3, quick_sort_comparisons
+  sw $s4, quick_sort_swaps
+  
+  li $v0, 4
+  la $a0, post_quick_sort
+  syscall
+
+  jal printarray
+  
+  li $v0, 4
+  la $a0, comp
+  syscall
+
+  li $v0, 1
+  lw $a0, quick_sort_comparisons
+  syscall
+
+  li $v0, 4
+  la $a0, newline
+  syscall
+  
+  li $v0, 4
+  la $a0, swaps
+  syscall
+
+  li $v0, 1
+  lw $a0, quick_sort_swaps
+  syscall
+
+  li $v0, 4
+  la $a0, newline
+  syscall
+  
+  jal array_replicate
+  
+  li $s3, 0 
+  li $s4, 0 
+  
+  li $v0, 4
+  la $a0, pre_selection_sort
+  syscall
+
+  jal printarray
+   
+  li $a0, 0
+  li $a1, 9
+  jal selection_sortsort
+  
+  sw $s3, selection_sort_comparisons
+  sw $s4, selection_sort_swaps
+  
+  li $v0, 4
+  la $a0, post_selection_sort
+  syscall
+
+  jal printarray
+  
+  li $v0, 4
+  la $a0, comp
+  syscall
+
+  li $v0, 1
+  lw $a0, selection_sort_comparisons
+  syscall
+
+  li $v0, 4
+  la $a0, newline
+  syscall
+  
+  li $v0, 4
+  la $a0, swaps
+  syscall
+
+  li $v0, 1
+  lw $a0, selection_sort_swaps
+  syscall
+
+  li $v0, 4
+  la $a0, newline
+  syscall
+  
+  lw $t0, selection_sort_comparisons
+  lw $t1, bubble_sort_comparisons
+  lw $t2, quick_sort_comparisons
+  bgt $t0, $t1, comparison_iteration_second
+  bgt $t0, $t2, second_print
+  li $v0, 4
+  la $a0, selection_sort
+  syscall
+  j print_comparisions
+
+  comparison_iteration_second:
+    bgt $t1, $t2, second_print
+
+    li $v0, 4
+    la $a0, bubble_sort
+    syscall
+
+    j print_comparisions
+
+  second_print:
+
+    li $v0, 4
+    la $a0, quick_sort
+    syscall
+
+  print_comparisions:
+    li $v0, 4
+    la $a0, output_of_comparisions
+    syscall
+  
+  lw $t0, selection_sort_swaps
+  lw $t1, bubble_sort_swaps
+  lw $t2, quick_sort_swaps
+
+  bgt $t0, $t1, comparison_iteration_second_swap
+  bgt $t0, $t2, second_printing_after_swap
+
+  li $v0, 4
+  la $a0, selection_sort
+  syscall
+
+  j printing_after_swap
+
+  comparison_iteration_second_swap: bgt $t1, $t2, second_printing_after_swap
+
+    li $v0, 4
+    la $a0, bubble_sort
+    syscall
+
+    j printing_after_swap
+
+  second_printing_after_swap:
+
+    li $v0, 4
+    la $a0, quick_sort
+    syscall
+
+  printing_after_swap:
+
+    li $v0, 4
+    la $a0, output_of_swaps
+    syscall
+  
+  # exit
+  li $v0, 10
+  syscall
+
+printarray:
+  la $t0, second_array
+  li $t1, 0
+
+  printing_loop:
+    li $v0, 1
+    lw $a0, 0($t0)
+    syscall
+
+    addi $t1, $t1, 1
+    addi $t0, $t0, 4
+    bge $t1, $s0, end_printing_loop
+
+    li $v0, 4
+    la $a0, comma
+    syscall
+
+    j printing_loop
+
+  end_printing_loop:
+    li $v0, 4
+    la $a0, newline
+    syscall
+
+    jr $ra
+  
+array_replicate:
+  li $t0, 0
+  move $t1, $s1
+  move $t2, $s2
+
+  array_replication_loop:
+     addi $t0, $t0, 1
+     lw $t3, 0($t1)
+     sw $t3, 0($t2)
+
+     addi $t1, 4
+     addi $t2, 4
+     
+     ble $t0, $s0, array_replication_loop
+
+  jr $ra
+
+quick_sortsort:
+
+  sw $ra, 0($s8)
+  addi $s8, $s8, 4
+
+  jal partition
+
+  sw $v1, 0($s7)
+  addi $s7, $s7, 4
+  sw $a0, 0($s5)
+
+  addi $s5, $s5, 4
+  sw $a1, 0($s6)
+  addi $s6, $s6, 4
+  
+  move $a1, $v1
+  addi $a1, $a1, -1
+  
+  ble $a1, $a0, second
+  jal quick_sortsort
+
+  second:
+
+    addi $s6, $s6, -4
+    addi $s7, $s7, -4
+
+    lw $a0, 0($s7)
+    lw $a1, 0($s6)
+
+    addi $a0, $a0, 1
+    bge $a0, $a1, finish
+
+    jal quick_sortsort
+
+  finish:
+    addi $s8, $s8, -4
+    addi $s5, $s5, -4
+
+    lw $ra, 0($s8)
+    jr $ra
+  
+  
+  partition:
+    move $t0, $s2
+    move $t1, $a0
+    move $t2, $a1
+    
+    li $t3, 4
+    mul $t5, $t1, $t3
+    mul $t6, $t2, $t3
+    add $t3, $t0, $t6
+    lw $t4, 0($t3)
+    add $t0, $t0, $t5
+    
+    addi $t1, $t1, -1
+    addi $t8, $t0, -4
+
+    partition_loop:
+      lw $t7, 0($t0)
+      addi $s3, $s3, 1
+      bgt $t7, $t4, nextiter
+      
+      addi $s4, $s4, 1
+      addi $t1, $t1, 1
+      addi $t8, $t8, 4
+      lw $t9, 0($t8)
+      sw $t7, 0($t8)
+      sw $t9, 0($t0)
+
+      nextiter:
+        addi $t0, $t0, 4
+        blt $t0, $t3, partition_loop
+
+    addi $t1 , $t1, 1
+    addi $t8, $t8, 4
+
+    lw $t9, 0($t8)
+    sw $t9, 0($t3)
+    sw $t4, 0($t8)
+
+    move $v1, $t1
+    jr $ra
+    
+      
+bubble_sortsort:
+  li $t0, 0
+  li $t1, 0
+
+  bubble_sort_loop_1:
+
+    li $t2, 1
+    move $t3, $s2
+    li $t4, 10
+    sub $t4, $t4, $t0
+
+    bubble_sort_loop_2:
+      bge $t2, $t4, end_bubble_sort_loop_2
+      lw $t1, 0($t3)
+      lw $t5, 4($t3)
+      addi $s3, $s3, 1
+      ble $t1, $t5, nextiterj1
+      addi $s4, $s4, 1
+      sw $t5, 0($t3)
+      sw $t1, 4($t3)
+      nextiterj1:
+        addi $t2, $t2, 1
+        addi $t3, $t3, 4
+        j bubble_sort_loop_2
+
+    end_bubble_sort_loop_2:
+      addi $t0, $t0, 1
+      blt $t0, $s0, bubble_sort_loop_1
+
+  jr $ra  
+  
+  
+selection_sortsort:
+  li $t0, 0
+  move $t1, $s2  
+
+  selection_sort_loop_1:
+    move $t2, $t1
+    li $t3, 10
+    sub $t3, $t3, $t0
+    lw $t4, 0($t1)
+    move $t5, $t1
+    addi $t2, $t2, 4
+    addi $t3, $t3, -1
+
+    selection_sort_loop_2:
+      ble $t3, 0, end_selection_sort_loop_2
+      addi $t3, $t3, -1
+
+      addi $s3, $s3, 1
+      lw $t6, 0($t2)
+      lw $t7, 0($t5)
+      bge $t6, $t7, nextiterj2
+      move $t5, $t2
+      nextiterj2:
+        addi $t2, $t2, 4
+        j selection_sort_loop_2
+
+    end_selection_sort_loop_2:
+      beq $t5, $t1, next_iteration_2
+      addi $s4, $s4, 1
+      lw $t8, 0($t1)
+      lw $t9, 0($t5)
+      sw $t8, 0($t5)
+      sw $t9, 0($t1)
+
+    next_iteration_2:
+      addi $t0, $t0, 1
+      addi $t1, $t1, 4
+      blt $t0, $s0, selection_sort_loop_1
+
+  jr $ra
+    

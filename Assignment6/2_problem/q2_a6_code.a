@@ -1,0 +1,256 @@
+.text
+    main:
+        
+        li $v0 4
+        la $a0 input_1
+        syscall
+
+        li $v0 8
+        la $a0 first_string
+        li $a1 10
+        syscall
+
+        li $v0 4
+        la $a0 input_2
+        syscall
+
+        li $v0 8
+        la $a0 second_string
+        li $a1 10
+        syscall
+
+        li $v0 4
+        la $a0 character
+        syscall
+
+        li $v0 12
+        syscall
+
+        move $t9 $v0 
+
+        li $v0 4
+        la $a0 newLine
+        syscall
+
+        li $v0 4
+        la $a0 length_1
+        syscall
+
+        la $a0 first_string 
+        jal Function_1
+
+        move $a0 $v0
+
+        li $v0 1
+        syscall
+
+        li $v0 4
+        la $a0 newLine
+        syscall
+
+        li $v0 4
+        la $a0 length_2
+        syscall
+
+        la $a0 second_string
+        jal Function_1
+
+        move $a0 $v0 
+
+        li $v0 1
+        syscall
+
+        li $v0 4
+        la $a0 newLine
+        syscall
+        
+        li $v0 4
+        la $a0 input_3
+        syscall
+
+        la $a0 first_string
+        move $a1 $t9
+        jal Function_2
+
+        li $v0 4
+        la $a0 input_4
+        syscall
+
+        li $v0 4
+        la $a0 newLine
+        syscall
+
+        li $v0 4
+        la $a0 input_3
+        syscall
+
+        la $a0 second_string
+        move $a1 $t9
+        jal Function_2
+
+        li $v0 4
+        la $a0 input_5
+        syscall
+        
+        li $v0 4
+        la $a0 newLine
+        syscall
+
+        li $v0 4
+        la $a0 concatenated_string_1
+        syscall
+
+        la $a0 first_string
+        la $a1 second_string
+        jal Function_3
+
+        li $v0 4
+        la $a0 concatenated_string
+        syscall 
+
+        li $v0 4
+        la $a0 newLine
+        syscall
+
+        li $v0 4
+        la $a0 concatenated_string_2
+        syscall
+
+        la $a1 first_string
+        la $a0 second_string
+        jal Function_3
+
+        li $v0 4
+        la $a0 concatenated_string
+        syscall 
+
+        li $v0 4
+        la $a0 newLine
+        syscall
+
+        # exit
+        li $v0 10
+        syscall
+
+    Function_1:
+        li $t3 0
+        li $t4 0
+        li $t1 0
+
+        move $t0 $a0 
+        lb $t5 ($t0)
+
+        function_1_loop_1: beq $t5 $t4 function_1_exit
+
+            addi $t1 $t1 1
+            addi $t3 $t3 1
+
+            add $t2 $t0 $t1 
+
+            lb $t5 ($t2)
+
+            j function_1_loop_1
+
+        function_1_exit:
+
+            subu $t3 $t3 1
+
+            move $v0 $t3
+            jr $ra
+
+    Function_2:
+        
+        move $t3 $a1 
+        move $t0 $a0 
+
+        li $t1 0
+        lb $t5 ($t0)
+
+        function_2_loop_1:
+            beq $t5 $t4 function_2_exit
+            beq $t5 $t3 fuction_2_check
+
+            addi $t1 $t1 1
+            add $t2 $t0 $t1 
+
+            lb $t5 ($t2)
+            j function_2_loop_1
+
+        fuction_2_check:
+            jr $ra 
+
+        function_2_exit:
+
+            li $v0 4
+            la $a0 not_string
+            syscall
+
+            jr $ra 
+
+    Function_3:
+        move $t0 $a0
+
+        la $t2 concatenated_string
+
+        li $t7 10
+        li $t4 0
+
+        lb $t5 ($t0) 
+
+        function_3_loop_1:
+            beq $t5 $t4 function_3_loop_1_extend
+            beq $t5 $t7 function_3_loop_1_extend
+
+            sb $t5 ($t2)
+
+            addi $t0 $t0 1
+            addi $t2 $t2 1
+
+            lb $t5 ($t0)
+
+            j function_3_loop_1
+
+        function_3_loop_1_extend:
+
+            move $t0 $a1 
+            lb $t5 ($t0)
+
+            function_3_loop_2:
+                beq $t5 $t4 function_3_loop_2_exit
+                beq $t5 $t7 function_3_loop_2_exit
+
+                sb $t5 ($t2)
+
+                addi $t2 $t2 1
+                addi $t0 $t0 1
+
+                lb $t5 ($t0)
+
+                j function_3_loop_2
+
+        function_3_loop_2_exit:
+            jr $ra 
+
+.data
+
+    first_string: .space 10
+    second_string: .space 10
+
+    concatenated_string: .space 20
+    concatenated_string_1: .asciiz "First concatenated string: "
+    concatenated_string_2: .asciiz "Second concatenated string: "
+
+    length_1: .asciiz "Length of first String: "
+    length_2: .asciiz "Length of second String: "
+
+    input_1: .asciiz "Input first String: "
+    input_2: .asciiz "Input second Stirng: "
+    input_3: .asciiz "Input Character is "
+    input_4: .asciiz "present in the first string"
+    input_5: .asciiz "present in the second string"
+
+    not_string: .asciiz "not "
+
+    character: .asciiz "Enter the character for search: "
+
+    newLine: .asciiz "\n"
